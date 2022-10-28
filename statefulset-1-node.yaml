@@ -37,7 +37,7 @@ spec:
             scheme: HTTP
             path: /readyz?noleader
             port: rqlite
-          initialDelaySeconds: 3
+          initialDelaySeconds: 2
           timeoutSeconds: 2
           failureThreshold: 3
         volumeMounts:
