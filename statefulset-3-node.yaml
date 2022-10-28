@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rqlite
+spec:
+  selector:
+    matchLabels:
+      app: rqlite # has to match .spec.template.metadata.labels
+  serviceName: rqlite-svc-internal
+  replicas: 3
+  podManagementPolicy: "Parallel"
+  template:
+    metadata:
+      labels:
+        app: rqlite # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: rqlite
+        image: rqlite/rqlite
+        args: ["-disco-mode=dns","-disco-config={\"name\":\"rqlite-svc-internal\"}","-bootstrap-expect","3", "-join-interval=1s", "-join-attempts=120"]
+        ports:
+        - containerPort: 4001
+          name: rqlite
+        readinessProbe:
+          httpGet:
+            scheme: HTTP
+            path: /readyz
+            port: 4001
+          periodSeconds: 5
+          timeoutSeconds: 2
+          # As rqlite manages a larger and larger dataset, it can take longer
+          # to be ready. This value may need to increase, depending on your experience.
+          initialDelaySeconds: 10
+        livenessProbe:
+          httpGet:
+            scheme: HTTP
+            path: /readyz?noleader
+            port: rqlite
+          initialDelaySeconds: 3
+          timeoutSeconds: 2
+          failureThreshold: 3
+        volumeMounts:
+        - name: rqlite-file
+          mountPath: /rqlite/file
+  volumeClaimTemplates:
+  - metadata:
+      name: rqlite-file
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "standard"
+      resources:
+        requests:
+          storage: 1Gi
