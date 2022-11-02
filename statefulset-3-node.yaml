@@ -29,9 +29,7 @@ spec:
             port: 4001
           periodSeconds: 5
           timeoutSeconds: 2
-          # As rqlite manages a larger and larger dataset, it can take longer
-          # to be ready. This value may need to increase, depending on your experience.
-          initialDelaySeconds: 10
+          initialDelaySeconds: 2
         livenessProbe:
           httpGet:
             scheme: HTTP
