@@ -14,7 +14,7 @@ spec:
       labels:
         app: rqlite # has to match .spec.selector.matchLabels
     spec:
-      terminationGracePeriodSeconds: 10
+      terminationGracePeriodSeconds: 5
       containers:
       - name: rqlite
         image: rqlite/rqlite
