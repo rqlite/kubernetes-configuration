@@ -14,11 +14,11 @@ spec:
       labels:
         app: rqlite # has to match .spec.selector.matchLabels
     spec:
-      terminationGracePeriodSeconds: 5
+      terminationGracePeriodSeconds: 10
       containers:
       - name: rqlite
         image: rqlite/rqlite
-        args: ["-disco-mode=dns","-disco-config={\"name\":\"rqlite-svc-internal\"}","-bootstrap-expect","3", "-join-interval=1s", "-join-attempts=120"]
+        args: ["-disco-mode=dns","-disco-config={\"name\":\"rqlite-svc-internal\"}","-bootstrap-expect=3", "-join-interval=1s", "-join-attempts=120"]
         ports:
         - containerPort: 4001
           name: rqlite
@@ -35,7 +35,7 @@ spec:
             scheme: HTTP
             path: /readyz?noleader
             port: rqlite
-          initialDelaySeconds: 2
+          initialDelaySeconds: 5
           timeoutSeconds: 2
           failureThreshold: 3
         volumeMounts:
